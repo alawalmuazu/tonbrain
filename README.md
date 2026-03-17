@@ -7,11 +7,26 @@
 *Built for the [TON AI Agent Hackathon 2026](https://identityhub.app/contests/ai-hackathon)*
 
 [![Live Bot](https://img.shields.io/badge/Try_it-@TonBrainAIBot-26A5E4?style=for-the-badge&logo=telegram)](https://t.me/TonBrainAIBot)
+[![Landing Page](https://img.shields.io/badge/Live_Demo-GitHub_Pages-222?style=for-the-badge&logo=github)](https://alawalmuazu.github.io/tonbrain/)
 [![Track 1](https://img.shields.io/badge/Track_1-Agent_Infrastructure-0098EA?style=for-the-badge)](https://identityhub.app/contests/ai-hackathon)
 [![Track 2](https://img.shields.io/badge/Track_2-User_Facing_Agent-00D4AA?style=for-the-badge)](https://identityhub.app/contests/ai-hackathon)
 [![MCP](https://img.shields.io/badge/MCP-13_Tools-FF6B6B?style=for-the-badge)](https://modelcontextprotocol.io)
 [![Gemini](https://img.shields.io/badge/Gemini_2.0-AI_Engine-8B5CF6?style=for-the-badge)](https://ai.google.dev)
 [![TON](https://img.shields.io/badge/TON-Blockchain-0098EA?style=for-the-badge)](https://ton.org)
+
+</div>
+
+---
+
+## 🎬 Demo
+
+<div align="center">
+
+![TonBrain Landing Page Demo](web/demo.webp)
+
+*Interactive landing page with live TON testnet data, Telegram-style chat, and light/dark theme toggle.*
+
+**👉 [View Live](https://alawalmuazu.github.io/tonbrain/) · [Try the Bot](https://t.me/TonBrainAIBot)**
 
 </div>
 
@@ -232,6 +247,32 @@ const task = await agent.router.routeTask({ capability: 'translate', input: { te
 
 ---
 
+## 🚀 Deploy the Bot
+
+### Docker
+```bash
+cp .env.example .env
+# Fill in your TELEGRAM_BOT_TOKEN and GEMINI_API_KEY
+docker build -t tonbrain .
+docker run --env-file .env tonbrain
+```
+
+### Railway (One-Click)
+1. Fork this repo
+2. Connect to [Railway](https://railway.app)
+3. Add environment variables from `.env.example`
+4. Deploy — bot starts automatically
+
+### Local Development
+```bash
+npm install
+cd packages/bot
+cp ../../.env.example .env  # Fill in your keys
+npm run dev
+```
+
+---
+
 ## 📄 License
 
 MIT — Build freely, build boldly.
@@ -244,6 +285,6 @@ MIT — Build freely, build boldly.
 
 *The native AI agent framework TON has been missing.*
 
-[Try the Bot →](https://t.me/TonBrainAIBot) · [View MCP Tools →](#-mcp-server--tonbrain-mcp) · [Contest →](https://identityhub.app/contests/ai-hackathon)
+[Try the Bot →](https://t.me/TonBrainAIBot) · [View Landing Page →](https://alawalmuazu.github.io/tonbrain/) · [Contest →](https://identityhub.app/contests/ai-hackathon)
 
 </div>

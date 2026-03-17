@@ -1,0 +1,8 @@
+[deploy]
+startCommand = "cd packages/bot && npx tsup src/index.ts --format esm --clean && node dist/index.js"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+
+[build]
+builder = "nixpacks"
+buildCommand = "npm install && cd packages/sdk && npx tsup src/index.ts --format esm --clean"
