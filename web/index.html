@@ -408,7 +408,7 @@
         <a href="#code">MCP</a>
         <a href="https://t.me/TonBrainAIBot" class="btn btn-telegram">🤖 Try the Bot</a>
         <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;color:var(--text-secondary);transition:all 0.2s;display:flex;align-items:center;gap:4px;">
-          <span id="theme-icon">🌙</span>
+          <span id="theme-icon">☀️</span>
         </button>
       </div>
     </div>
@@ -925,10 +925,12 @@ agent.registry.<span class="function">register</span>({
         } catch(e) {}
       }
     }
-    // Apply saved theme before paint
+    // Apply saved theme before paint (light is default)
     (function() {
       const saved = localStorage.getItem('tonbrain-theme');
-      if (saved === 'light') {
+      if (saved === 'dark') {
+        // Only go dark if explicitly saved
+      } else {
         document.documentElement.setAttribute('data-theme', 'light');
       }
     })();
@@ -936,7 +938,7 @@ agent.registry.<span class="function">register</span>({
     document.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem('tonbrain-theme');
       const icon = document.getElementById('theme-icon');
-      if (icon) icon.textContent = saved === 'light' ? '☀️' : '🌙';
+      if (icon) icon.textContent = saved === 'dark' ? '🌙' : '☀️';
     });
 
     // Countdown to March 25, 2026 UTC
@@ -1139,11 +1141,11 @@ agent.registry.<span class="function">register</span>({
     try {
       const twContainer = document.getElementById('tw-container');
       if (twContainer && window.TWallpaper) {
-        const isLight = localStorage.getItem('tonbrain-theme') === 'light';
+        const isDark = localStorage.getItem('tonbrain-theme') === 'dark';
         const wallpaper = new TWallpaper(twContainer, {
-          colors: isLight
-            ? ['#E8F4FD', '#D1ECFA', '#0098EA', '#B8E6FF']
-            : ['#0D1117', '#0A2540', '#0098EA', '#003D5C'],
+          colors: isDark
+            ? ['#0D1117', '#0A2540', '#0098EA', '#003D5C']
+            : ['#E8F4FD', '#D1ECFA', '#0098EA', '#B8E6FF'],
           tails: 50,
           fps: 30,
           animate: true
