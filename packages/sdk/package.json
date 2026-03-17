@@ -8,16 +8,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./src/index.ts",
-      "default": "./src/index.ts"
-    },
-    "./payments/*": {
-      "import": "./src/payments/*.ts",
-      "default": "./src/payments/*.ts"
-    },
-    "./core/*": {
-      "import": "./src/core/*.ts",
-      "default": "./src/core/*.ts"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
