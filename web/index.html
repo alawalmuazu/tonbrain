@@ -300,6 +300,42 @@
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
+    /* ── TWallpaper — Telegram animated gradient ── */
+    .tw-hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      overflow: hidden; border-radius: 0;
+    }
+    .tw-hero-bg canvas { width: 100% !important; height: 100% !important; }
+    .hero { position: relative; }
+    .hero .container { position: relative; z-index: 2; }
+    .hero::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 120px; background: linear-gradient(transparent, var(--bg-primary)); z-index: 1;
+    }
+
+    /* ── Telegram-style chat bubbles for demo ── */
+    .tg-bubble-out {
+      background: #2B5278; border-radius: 12px 12px 0 12px;
+      padding: 8px 14px; display: inline-block; max-width: 85%;
+      color: #E6EDF3; font-size: 13px; line-height: 1.5;
+    }
+    .tg-bubble-in {
+      background: #182533; border-radius: 0 12px 12px 12px;
+      padding: 8px 14px; display: inline-block; max-width: 85%;
+      color: #E6EDF3; font-size: 13px; line-height: 1.5;
+    }
+    .tg-bubble-out .time, .tg-bubble-in .time {
+      font-size: 10px; color: rgba(230,237,243,0.45); margin-left: 8px; float: right; margin-top: 4px;
+    }
+    .tg-name { font-size: 12px; font-weight: 600; color: #0098EA; margin-bottom: 3px; }
+
+    /* ── Telegram-style SVG pattern overlay ── */
+    .tg-pattern {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      opacity: 0.015;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230098EA' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .hero-stats { flex-direction: column; gap: 20px; }
@@ -317,7 +353,7 @@
   </style>
 </head>
 <body>
-  <div class="bg-grid"></div>
+  <div class="tg-pattern"></div>
   <div class="bg-glow bg-glow-1"></div>
   <div class="bg-glow bg-glow-2"></div>
   <div class="bg-glow bg-glow-3"></div>
@@ -342,6 +378,7 @@
 
   <!-- Hero -->
   <section class="hero">
+    <div class="tw-hero-bg" id="tw-container"></div>
     <div class="container">
       <div class="hero-badge">
         <span class="dot"></span>
@@ -904,9 +941,9 @@ agent.registry.<span class="function">register</span>({
           bubble.style.animation = 'fadeInUp 0.4s ease';
 
           if (type === 'user') {
-            bubble.innerHTML = `<div style="text-align:right;"><span style="background:rgba(0,152,234,0.2);border:1px solid rgba(0,152,234,0.3);padding:6px 14px;border-radius:12px 12px 0 12px;display:inline-block;color:#0098EA;font-weight:500;max-width:85%;">${content}</span></div>`;
+            bubble.innerHTML = `<div style="text-align:right;"><span class="tg-bubble-out">${content}<span class="time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span></span></div>`;
           } else if (type === 'bot') {
-            bubble.innerHTML = `<div><span style="color:#64748B;font-size:11px;">🧠 TonBrain</span><br><span style="background:rgba(15,21,32,0.9);border:1px solid var(--border);padding:8px 14px;border-radius:0 12px 12px 12px;display:inline-block;color:var(--text-primary);max-width:85%;">${content}</span></div>`;
+            bubble.innerHTML = `<div><div class="tg-name">🧠 TonBrain</div><span class="tg-bubble-in">${content}<span class="time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span></span></div>`;
           } else if (type === 'system') {
             bubble.innerHTML = `<div style="text-align:center;"><span style="color:var(--text-dim);font-size:11px;font-style:italic;">${content}</span></div>`;
           }
@@ -1020,6 +1057,26 @@ agent.registry.<span class="function">register</span>({
 
     // Kick off the demo
     runDemo();
+  </script>
+
+  <!-- TWallpaper — Telegram animated gradient -->
+  <script src="https://cdn.jsdelivr.net/npm/twallpaper@latest/dist/index.umd.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/twallpaper@latest/dist/index.css">
+  <script>
+    // Init animated Telegram-style gradient in hero
+    try {
+      const twContainer = document.getElementById('tw-container');
+      if (twContainer && window.TWallpaper) {
+        const wallpaper = new TWallpaper(twContainer, {
+          colors: ['#0D1117', '#0A2540', '#0098EA', '#003D5C'],
+          tails: 50,
+          fps: 30,
+          animate: true
+        });
+        wallpaper.init();
+        wallpaper.animate(true);
+      }
+    } catch(e) { console.warn('TWallpaper init failed:', e); }
   </script>
 </body>
 </html>
