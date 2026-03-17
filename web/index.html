@@ -41,6 +41,40 @@
       --radius-sm: 8px;
     }
 
+    /* ── Light Theme — Telegram Light ── */
+    [data-theme="light"] {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F7F8FA;
+      --bg-card: rgba(243, 245, 247, 0.95);
+      --bg-glass: rgba(243, 245, 247, 0.8);
+      --text-primary: #1A1A1A;
+      --text-secondary: #65717B;
+      --text-dim: #8E9AA5;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-bright: rgba(0, 152, 234, 0.2);
+      --shadow-glow: 0 0 40px rgba(0, 152, 234, 0.06);
+    }
+    [data-theme="light"] nav { background: rgba(255, 255, 255, 0.9); }
+    [data-theme="light"] .tg-pattern { opacity: 0.025; }
+    [data-theme="light"] .bg-glow { opacity: 0.04; }
+    [data-theme="light"] .code-block { background: #F0F2F5; }
+    [data-theme="light"] .code-header { background: rgba(0,0,0,0.04); }
+    [data-theme="light"] .code-content { color: #4A5568; }
+    [data-theme="light"] .tg-bubble-out { background: #EFFDDE; color: #1A1A1A; }
+    [data-theme="light"] .tg-bubble-in { background: #FFFFFF; color: #1A1A1A; border: 1px solid rgba(0,0,0,0.06); }
+    [data-theme="light"] .tg-bubble-out .time,
+    [data-theme="light"] .tg-bubble-in .time { color: rgba(0,0,0,0.35); }
+    [data-theme="light"] .tg-name { color: #0098EA; }
+    [data-theme="light"] .hero h1 .gradient {
+      background: linear-gradient(135deg, #0077B5, #0098EA);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; color: transparent;
+    }
+    [data-theme="light"] .countdown-bar { border-color: rgba(245, 166, 35, 0.12); }
+    [data-theme="light"] .btn-outline { border-color: rgba(0,0,0,0.12); color: #1A1A1A; }
+    [data-theme="light"] .btn-outline:hover { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(0,152,234,0.05); }
+    [data-theme="light"] footer { border-top-color: rgba(0,0,0,0.06); }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
 
@@ -51,6 +85,7 @@
       overflow-x: hidden;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .bg-grid {
@@ -372,6 +407,9 @@
         <a href="#code">SDK</a>
         <a href="#code">MCP</a>
         <a href="https://t.me/TonBrainAIBot" class="btn btn-telegram">🤖 Try the Bot</a>
+        <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;color:var(--text-secondary);transition:all 0.2s;display:flex;align-items:center;gap:4px;">
+          <span id="theme-icon">🌙</span>
+        </button>
       </div>
     </div>
   </nav>
@@ -867,6 +905,40 @@ agent.registry.<span class="function">register</span>({
   </footer>
 
   <script>
+    // ── Theme Toggle ──
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next === 'dark' ? '' : 'light');
+      if (next === 'dark') html.removeAttribute('data-theme');
+      localStorage.setItem('tonbrain-theme', next);
+      document.getElementById('theme-icon').textContent = next === 'light' ? '☀️' : '🌙';
+      // Update TWallpaper colors for theme
+      if (window._twInstance) {
+        try {
+          window._twInstance.updateColors(
+            next === 'light'
+              ? ['#E8F4FD', '#D1ECFA', '#0098EA', '#B8E6FF']
+              : ['#0D1117', '#0A2540', '#0098EA', '#003D5C']
+          );
+        } catch(e) {}
+      }
+    }
+    // Apply saved theme before paint
+    (function() {
+      const saved = localStorage.getItem('tonbrain-theme');
+      if (saved === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+    // Update icon after DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('tonbrain-theme');
+      const icon = document.getElementById('theme-icon');
+      if (icon) icon.textContent = saved === 'light' ? '☀️' : '🌙';
+    });
+
     // Countdown to March 25, 2026 UTC
     function updateCountdown() {
       const deadline = new Date('2026-03-25T00:00:00Z').getTime();
@@ -1067,14 +1139,18 @@ agent.registry.<span class="function">register</span>({
     try {
       const twContainer = document.getElementById('tw-container');
       if (twContainer && window.TWallpaper) {
+        const isLight = localStorage.getItem('tonbrain-theme') === 'light';
         const wallpaper = new TWallpaper(twContainer, {
-          colors: ['#0D1117', '#0A2540', '#0098EA', '#003D5C'],
+          colors: isLight
+            ? ['#E8F4FD', '#D1ECFA', '#0098EA', '#B8E6FF']
+            : ['#0D1117', '#0A2540', '#0098EA', '#003D5C'],
           tails: 50,
           fps: 30,
           animate: true
         });
         wallpaper.init();
         wallpaper.animate(true);
+        window._twInstance = wallpaper;
       }
     } catch(e) { console.warn('TWallpaper init failed:', e); }
   </script>
