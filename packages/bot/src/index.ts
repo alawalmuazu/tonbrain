@@ -98,9 +98,26 @@ bot.start({
   },
 });
 
+// ── Health HTTP Server (for Render/Koyeb free tier) ──
+import { createServer } from 'http';
+const PORT = parseInt(process.env.PORT ?? '3000', 10);
+const healthServer = createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    status: 'ok',
+    bot: 'TonBrain v1.0.0',
+    network: process.env.NETWORK ?? 'testnet',
+    uptime: Math.floor(process.uptime()),
+  }));
+});
+healthServer.listen(PORT, () => {
+  console.log(`🩺 Health server on port ${PORT}`);
+});
+
 // Graceful shutdown
 const shutdown = () => {
   console.log('\n🛑 Shutting down...');
+  healthServer.close();
   bot.stop();
   db.close();
   process.exit(0);

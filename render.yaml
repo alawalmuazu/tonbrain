@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: tonbrain-bot
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install && cd packages/sdk && npx tsup src/index.ts --format esm --clean && cd ../bot && npx tsup src/index.ts --format esm --clean
+    startCommand: node packages/bot/dist/index.js
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: NETWORK
+        value: testnet
+      - key: NODE_ENV
+        value: production
