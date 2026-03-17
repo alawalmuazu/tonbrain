@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TonBrain — AI Agent Infrastructure for TON Blockchain</title>
+  <meta name="description" content="The native AI agent framework for TON. Build intelligent agents with wallet management, payment flows, and multi-agent coordination. Try @TonBrainAIBot on Telegram.">
+  
+  <!-- OG Tags for Social Sharing -->
+  <meta property="og:title" content="TonBrain — AI Agent Infrastructure for TON Blockchain">
+  <meta property="og:description" content="The native AI agent framework for TON. Dual-track hackathon submission: SDK + AI Telegram Bot. Try @TonBrainAIBot live.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tonbrain.dev">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TonBrain — AI Agent Framework for TON">
+  <meta name="twitter:description" content="Build AI agents on TON. SDK + Telegram Bot powered by Gemini AI. TON AI Agent Hackathon 2026.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #0f1520;
+      --bg-card: rgba(15, 21, 32, 0.8);
+      --bg-glass: rgba(15, 21, 32, 0.6);
+      --accent-blue: #0098EA;
+      --accent-cyan: #00D4AA;
+      --accent-purple: #8B5CF6;
+      --accent-green: #A8FF78;
+      --accent-gold: #FFD700;
+      --gradient-main: linear-gradient(135deg, #0098EA, #00D4AA);
+      --gradient-purple: linear-gradient(135deg, #8B5CF6, #EC4899);
+      --gradient-gold: linear-gradient(135deg, #FFD700, #FF8C00);
+      --text-primary: #FFFFFF;
+      --text-secondary: #94A3B8;
+      --text-dim: #64748B;
+      --border: rgba(148, 163, 184, 0.1);
+      --border-bright: rgba(0, 152, 234, 0.3);
+      --shadow-glow: 0 0 60px rgba(0, 152, 234, 0.15);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .bg-grid {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0; pointer-events: none;
+    }
+
+    .bg-glow {
+      position: fixed; width: 600px; height: 600px;
+      border-radius: 50%; filter: blur(120px);
+      opacity: 0.15; pointer-events: none; z-index: 0;
+    }
+    .bg-glow-1 { top: -200px; left: -100px; background: var(--accent-blue); }
+    .bg-glow-2 { top: 50%; right: -200px; background: var(--accent-purple); opacity: 0.1; }
+    .bg-glow-3 { bottom: -200px; left: 30%; background: var(--accent-cyan); opacity: 0.08; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+    section { padding: 100px 0; }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      backdrop-filter: blur(20px);
+      background: rgba(10, 14, 23, 0.8);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 20px;
+      text-decoration: none; color: var(--text-primary);
+    }
+    .nav-logo .icon {
+      width: 36px; height: 36px; background: var(--gradient-main);
+      border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; font-size: 20px;
+    }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 14px; font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 24px; border-radius: var(--radius-sm);
+      font-weight: 600; font-size: 14px; text-decoration: none;
+      transition: all 0.3s ease; cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--gradient-main); color: white; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0, 152, 234, 0.3); }
+    .btn-telegram { background: #26A5E4; color: white; }
+    .btn-telegram:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(38, 165, 228, 0.3); }
+    .btn-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border-bright); }
+    .btn-outline:hover { background: rgba(0, 152, 234, 0.1); border-color: var(--accent-blue); }
+    .btn-lg { padding: 14px 32px; font-size: 16px; border-radius: 14px; }
+
+    /* ── Hero ── */
+    .hero { padding: 160px 0 100px; text-align: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 100px;
+      border: 1px solid var(--border-bright);
+      background: rgba(0, 152, 234, 0.08);
+      font-size: 13px; font-weight: 500; color: var(--accent-blue);
+      margin-bottom: 32px; animation: fadeInUp 0.6s ease;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); animation: pulse 2s ease infinite; }
+    .hero h1 {
+      font-size: clamp(48px, 7vw, 80px); font-weight: 900;
+      line-height: 1.05; margin-bottom: 24px; letter-spacing: -0.03em;
+      animation: fadeInUp 0.6s ease 0.1s both;
+    }
+    .hero h1 .gradient {
+      background: var(--gradient-main);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p {
+      font-size: 20px; color: var(--text-secondary);
+      max-width: 640px; margin: 0 auto 40px; line-height: 1.6;
+      animation: fadeInUp 0.6s ease 0.2s both;
+    }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeInUp 0.6s ease 0.3s both; }
+    .hero-stats { display: flex; gap: 48px; justify-content: center; margin-top: 80px; animation: fadeInUp 0.6s ease 0.4s both; }
+    .hero-stats .stat { text-align: center; }
+    .hero-stats .stat-value { font-size: 36px; font-weight: 800; background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-stats .stat-label { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+
+    /* ── Sections ── */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 14px; border-radius: 100px;
+      background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2);
+      font-size: 12px; font-weight: 600; color: var(--accent-purple);
+      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;
+    }
+    .section-label.gold { background: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.2); color: var(--accent-gold); }
+    .section-label.blue { background: rgba(0, 152, 234, 0.1); border-color: rgba(0, 152, 234, 0.2); color: var(--accent-blue); }
+    .section-label.green { background: rgba(0, 212, 170, 0.1); border-color: rgba(0, 212, 170, 0.2); color: var(--accent-cyan); }
+    .section-title { font-size: clamp(32px, 4vw, 48px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .section-subtitle { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin-bottom: 60px; }
+
+    /* ── Feature Grid ── */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: var(--gradient-main); opacity: 0; transition: opacity 0.3s;
+    }
+    .feature-card:hover { border-color: var(--border-bright); transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+    .feature-icon.blue { background: rgba(0, 152, 234, 0.1); }
+    .feature-icon.green { background: rgba(0, 212, 170, 0.1); }
+    .feature-icon.purple { background: rgba(139, 92, 246, 0.1); }
+    .feature-icon.orange { background: rgba(249, 115, 22, 0.1); }
+    .feature-icon.gold { background: rgba(255, 215, 0, 0.1); }
+    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── Judging Criteria ── */
+    .criteria-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .criteria-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px; text-align: center;
+      transition: all 0.3s ease; position: relative;
+    }
+    .criteria-card:hover { border-color: var(--border-bright); transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+    .criteria-score {
+      font-size: 48px; font-weight: 900; margin-bottom: 8px;
+      background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .criteria-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .criteria-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .criteria-card .weight { font-size: 11px; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+
+    /* ── Ecosystem Section ── */
+    .ecosystem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .eco-stat {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px; text-align: center;
+    }
+    .eco-stat .value { font-size: 42px; font-weight: 900; margin-bottom: 4px; }
+    .eco-stat .value.blue { background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .eco-stat .value.purple { background: var(--gradient-purple); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .eco-stat .value.gold { background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .eco-stat .label { font-size: 14px; color: var(--text-secondary); }
+    .eco-stat .source { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+
+    /* ── Tech Stack ── */
+    .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+    .stack-item {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 20px; text-align: center;
+      transition: all 0.3s ease;
+    }
+    .stack-item:hover { border-color: var(--border-bright); }
+    .stack-item .emoji { font-size: 28px; margin-bottom: 8px; }
+    .stack-item .name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .stack-item .desc { font-size: 12px; color: var(--text-dim); }
+
+    /* ── Countdown ── */
+    .countdown-bar {
+      background: var(--bg-card); border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: var(--radius); padding: 20px 32px;
+      display: flex; align-items: center; justify-content: center; gap: 40px;
+      margin-top: 40px;
+    }
+    .countdown-item { text-align: center; }
+    .countdown-item .num { font-size: 32px; font-weight: 900; background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .countdown-item .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ── Code, Tracks, CTA ── */
+    .code-section { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+    .code-block { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .code-header { padding: 12px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-dot.red { background: #FF5F57; } .code-dot.yellow { background: #FFBD2E; } .code-dot.green { background: #27C93F; }
+    .code-title { font-size: 13px; color: var(--text-dim); margin-left: 8px; font-family: 'JetBrains Mono', monospace; }
+    .code-content { padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: var(--text-secondary); overflow-x: auto; white-space: pre; }
+    .code-content .keyword { color: #C792EA; } .code-content .string { color: #C3E88D; }
+    .code-content .comment { color: #546E7A; } .code-content .function { color: #82AAFF; }
+    .code-content .const { color: #F78C6C; } .code-content .type { color: #FFCB6B; }
+
+    .tracks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .track-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px; transition: all 0.3s ease; }
+    .track-card:hover { border-color: var(--border-bright); box-shadow: var(--shadow-glow); }
+    .track-number { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .track-card:nth-child(1) .track-number { color: var(--accent-blue); }
+    .track-card:nth-child(2) .track-number { color: var(--accent-cyan); }
+    .track-card h3 { font-size: 24px; font-weight: 800; margin-bottom: 12px; }
+    .track-card p { color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6; }
+    .track-features { list-style: none; }
+    .track-features li { padding: 8px 0; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 10px; }
+    .track-features li::before { content: '→'; color: var(--accent-cyan); font-weight: 700; }
+    .track-prize { display: inline-block; margin-top: 16px; padding: 6px 14px; border-radius: 100px; background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.2); font-size: 13px; font-weight: 700; color: var(--accent-gold); }
+
+    .cta-section { text-align: center; padding: 120px 0; }
+    .cta-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 24px; padding: 80px 40px; position: relative; overflow: hidden;
+    }
+    .cta-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gradient-main); }
+    .cta-box h2 { font-size: 40px; font-weight: 800; margin-bottom: 16px; }
+    .cta-box p { color: var(--text-secondary); font-size: 18px; margin-bottom: 32px; }
+
+    footer { padding: 40px 0; border-top: 1px solid var(--border); }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { color: var(--text-dim); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent-blue); }
+    footer p { font-size: 13px; color: var(--text-dim); }
+    footer a { color: var(--accent-blue); text-decoration: none; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero-stats { flex-direction: column; gap: 24px; }
+      .code-section, .tracks-grid, .criteria-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .ecosystem-grid { grid-template-columns: 1fr; }
+      .countdown-bar { flex-direction: column; gap: 16px; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .criteria-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <div class="icon">🧠</div>
+        TonBrain
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#judging">Judging</a>
+        <a href="#tracks">Tracks</a>
+        <a href="#code">SDK</a>
+        <a href="#code">MCP</a>
+        <a href="https://t.me/TonBrainAIBot" class="btn btn-telegram">🤖 Try the Bot</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        TON AI Agent Hackathon 2026 — $20,000 Prize Pool
+      </div>
+      <h1>
+        The Native AI Agent<br>
+        Framework for <span class="gradient">TON</span>
+      </h1>
+      <p>
+        Build intelligent agents with wallet management, payment flows, and multi-agent coordination.
+        The missing infrastructure layer for AI on TON — filling the gap no one else has.
+      </p>
+      <div class="hero-buttons">
+        <a href="https://t.me/TonBrainAIBot" class="btn btn-telegram btn-lg">
+          🤖 Try @TonBrainAIBot
+        </a>
+        <a href="#code" class="btn btn-primary btn-lg">
+          📦 View SDK
+        </a>
+        <a href="https://identityhub.app/contests/ai-hackathon" class="btn btn-outline btn-lg">
+          🏆 View Contest
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-value">13</div>
+          <div class="stat-label">MCP Tools</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Packages</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">2</div>
+          <div class="stat-label">Hackathon Tracks</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">Gemini</div>
+          <div class="stat-label">2.0 Flash AI</div>
+        </div>
+      </div>
+
+      <!-- Countdown -->
+      <div class="countdown-bar" id="countdown">
+        <div style="font-size:14px; font-weight:700; color:var(--accent-gold);">⏰ Submission Deadline</div>
+        <div class="countdown-item"><div class="num" id="cd-days">--</div><div class="lbl">Days</div></div>
+        <div class="countdown-item"><div class="num" id="cd-hours">--</div><div class="lbl">Hours</div></div>
+        <div class="countdown-item"><div class="num" id="cd-mins">--</div><div class="lbl">Minutes</div></div>
+        <div class="countdown-item"><div class="num" id="cd-secs">--</div><div class="lbl">Seconds</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ecosystem Gap -->
+  <section id="ecosystem">
+    <div class="container">
+      <span class="section-label green">📊 The Opportunity</span>
+      <h2 class="section-title">The Stack Is Ready, The Apps Aren't</h2>
+      <p class="section-subtitle">
+        Telegram's AI ecosystem is booming. But zero of the top AI bots use TON on-chain. TonBrain fills this gap.
+      </p>
+      <div class="ecosystem-grid">
+        <div class="eco-stat">
+          <div class="value blue">1B+</div>
+          <div class="label">Telegram Monthly Active Users</div>
+          <div class="source">Source: Telegram, 2026</div>
+        </div>
+        <div class="eco-stat">
+          <div class="value purple">183</div>
+          <div class="label">AI Bots on Telegram</div>
+          <div class="source">44.3M combined MAU</div>
+        </div>
+        <div class="eco-stat">
+          <div class="value gold">0</div>
+          <div class="label">Top AI Bots Using TON On-Chain</div>
+          <div class="source">This is the gap TonBrain fills</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="container">
+      <span class="section-label">🚀 Features</span>
+      <h2 class="section-title">Everything AI Agents Need</h2>
+      <p class="section-subtitle">
+        A complete toolkit for building, deploying, and coordinating AI agents on the TON blockchain.
+      </p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon blue">💼</div>
+          <h3>Wallet Management</h3>
+          <p>Create, import, and manage TON wallets. Multi-wallet support with balance queries, transaction history, and Jetton tracking via TON HTTP API.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon green">💰</div>
+          <h3>Payment Flows</h3>
+          <p>Escrow payments with state machine, invoicing with ton:// deep links, and proportional payment splitting. Agent-to-agent transactions with trust.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon purple">🤖</div>
+          <h3>Agent Coordination</h3>
+          <p>Multi-agent registry for capability discovery, cost-based task routing, and structured agent-to-agent messaging protocol with TON settlement.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon orange">🧠</div>
+          <h3>Gemini AI Engine</h3>
+          <p>Natural language to blockchain operations via Google Gemini 2.0 Flash. Function calling auto-routes user intents to TON tools.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon blue">🔄</div>
+          <h3>DEX Swaps</h3>
+          <p>Token swap quotes via DEX aggregators. Best rates across DeDust and STON.fi with slippage control and quote comparison.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon green">🖼</div>
+          <h3>NFT Gallery</h3>
+          <p>Browse, inspect, and manage NFTs. Full metadata including collection info, attributes, and previews via TONAPI v2.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Judging Criteria -->
+  <section id="judging">
+    <div class="container">
+      <span class="section-label gold">🏆 Hackathon Judging</span>
+      <h2 class="section-title">Built to Win on Every Criteria</h2>
+      <p class="section-subtitle">
+        Submissions scored 0-10 across four equally weighted categories. Here's how TonBrain delivers.
+      </p>
+      <div class="criteria-grid">
+        <div class="criteria-card">
+          <div class="weight">25% Weight</div>
+          <div class="criteria-score">✨</div>
+          <h4>Product Quality</h4>
+          <p>Branded welcome banner, HTML-formatted messages, inline keyboards, typing indicators, graceful error handling</p>
+        </div>
+        <div class="criteria-card">
+          <div class="weight">25% Weight</div>
+          <div class="criteria-score">⚡</div>
+          <h4>Technical Execution</h4>
+          <p>TypeScript monorepo, Gemini function calling, TON API integration, escrow state machine, agent coordination protocol</p>
+        </div>
+        <div class="criteria-card">
+          <div class="weight">25% Weight</div>
+          <div class="criteria-score">🌐</div>
+          <h4>Ecosystem Value</h4>
+          <p>Fills the exact gap: "No native AI agent framework for TON." Open-source SDK others can build on, MCP-aligned</p>
+        </div>
+        <div class="criteria-card">
+          <div class="weight">25% Weight</div>
+          <div class="criteria-score">📈</div>
+          <h4>User Potential</h4>
+          <p>1B+ Telegram users can interact with TON via natural language. No app downloads, no seed phrases — just chat</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tracks -->
+  <section id="tracks" style="padding-top: 60px;">
+    <div class="container">
+      <span class="section-label">🎯 Dual-Track Submission</span>
+      <h2 class="section-title">Competing in Both Tracks</h2>
+      <p class="section-subtitle">
+        TonBrain is a unified architecture that covers both hackathon tracks with shared infrastructure.
+      </p>
+      <div class="tracks-grid">
+        <div class="track-card">
+          <div class="track-number">Track 1 — Agent Infrastructure</div>
+          <h3>tonbrain-sdk</h3>
+          <p>Open-source SDK providing higher-level primitives for AI agents on TON, aligned with @ton/mcp.</p>
+          <ul class="track-features">
+            <li>WalletManager with TON API integration</li>
+            <li>Escrow payment state machine</li>
+            <li>Invoice generation with deep links</li>
+            <li>Multi-party payment splitting</li>
+            <li>Agent registry & capability discovery</li>
+            <li>Cost-based task routing</li>
+            <li>Structured A2A messaging protocol</li>
+          </ul>
+          <span class="track-prize">🏆 $10,000 Prize Pool</span>
+        </div>
+        <div class="track-card">
+          <div class="track-number">Track 2 — User-Facing Agent</div>
+          <h3>tonbrain-bot</h3>
+          <p>Production-grade Telegram bot letting users interact with TON through natural conversation.</p>
+          <ul class="track-features">
+            <li>Gemini 2.0 Flash with function calling</li>
+            <li>12 commands: wallet, balance, send, swap, NFTs...</li>
+            <li>NFT gallery and portfolio analytics</li>
+            <li>Branded welcome with photo banner</li>
+            <li>Wallet auto-detection & DNS resolution</li>
+            <li>Conversation memory (per-user)</li>
+            <li>Interactive inline keyboards + callbacks</li>
+          </ul>
+          <span class="track-prize">🏆 $10,000 Prize Pool</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack -->
+  <section id="stack">
+    <div class="container">
+      <span class="section-label blue">🛠 Tech Stack</span>
+      <h2 class="section-title">Production-Grade Tools</h2>
+      <p class="section-subtitle">Every technology chosen for a reason — type safety, speed, and ecosystem fit.</p>
+      <div class="stack-grid">
+        <div class="stack-item"><div class="emoji">📘</div><div class="name">TypeScript</div><div class="desc">Type-safe codebase</div></div>
+        <div class="stack-item"><div class="emoji">🧠</div><div class="name">Gemini 2.0</div><div class="desc">AI Engine</div></div>
+        <div class="stack-item"><div class="emoji">💎</div><div class="name">TON API</div><div class="desc">Toncenter + TONAPI</div></div>
+        <div class="stack-item"><div class="emoji">🤖</div><div class="name">Grammy</div><div class="desc">Telegram Framework</div></div>
+        <div class="stack-item"><div class="emoji">✅</div><div class="name">Zod</div><div class="desc">Runtime Validation</div></div>
+        <div class="stack-item"><div class="emoji">📦</div><div class="name">npm Workspaces</div><div class="desc">Monorepo</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Code Example -->
+  <section id="code" style="padding-top: 60px;">
+    <div class="container">
+      <span class="section-label">💻 Developer Experience</span>
+      <h2 class="section-title">5 Lines to Get Started</h2>
+      <p class="section-subtitle">The SDK wraps complex blockchain operations into a clean, TypeScript-first API.</p>
+      <div class="code-section">
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+            <span class="code-title">agent.ts</span>
+          </div>
+          <div class="code-content">
+<span class="keyword">import</span> { <span class="type">TonBrainAgent</span> } <span class="keyword">from</span> <span class="string">'tonbrain-sdk'</span>;
+
+<span class="comment">// Initialize on testnet</span>
+<span class="keyword">const</span> <span class="const">agent</span> = <span class="keyword">new</span> <span class="function">TonBrainAgent</span>({
+  network: <span class="string">'testnet'</span>
+});
+<span class="keyword">await</span> agent.<span class="function">initialize</span>();
+
+<span class="comment">// Check balance</span>
+<span class="keyword">const</span> <span class="const">balance</span> = <span class="keyword">await</span> agent.wallet
+  .<span class="function">getBalance</span>();
+
+<span class="comment">// Create an invoice</span>
+<span class="keyword">const</span> <span class="const">invoice</span> = agent.invoices.<span class="function">create</span>({
+  recipient: <span class="string">'EQ...'</span>,
+  amount: <span class="string">'1.5'</span>,
+  description: <span class="string">'AI service'</span>,
+});
+
+<span class="comment">// Register as an agent</span>
+agent.registry.<span class="function">register</span>({
+  name: <span class="string">'MyAgent'</span>,
+  walletAddress: agent.wallet.<span class="function">getAddress</span>(),
+  capabilities: [{
+    name: <span class="string">'translate'</span>,
+    costPerCall: <span class="string">'0.01'</span>,
+  }],
+});
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+            <span class="code-title">escrow.ts</span>
+          </div>
+          <div class="code-content">
+<span class="comment">// Agent-to-Agent Escrow Payment</span>
+
+<span class="comment">// 1. Create escrow</span>
+<span class="keyword">const</span> <span class="const">escrow</span> = agent.escrow.<span class="function">create</span>({
+  payer: <span class="string">'AgentA-address'</span>,
+  payee: <span class="string">'AgentB-address'</span>,
+  amount: <span class="string">'5.0'</span>,
+  description: <span class="string">'Data analysis task'</span>,
+});
+
+<span class="comment">// 2. Fund the escrow</span>
+<span class="keyword">await</span> agent.escrow.<span class="function">fund</span>(
+  escrow.id, <span class="string">'tx-hash-123'</span>
+);
+
+<span class="comment">// 3. Task completed → Release!</span>
+<span class="keyword">await</span> agent.escrow.<span class="function">release</span>(escrow.id);
+
+<span class="comment">// ── Payment Splitting ──</span>
+<span class="keyword">const</span> <span class="const">split</span> = agent.splitter
+  .<span class="function">createProportional</span>({
+    totalAmount: <span class="string">'10.0'</span>,
+    recipients: [
+      { address: <span class="string">'EQ...'</span>, share: <span class="const">7000</span> },
+      { address: <span class="string">'EQ...'</span>, share: <span class="const">3000</span> },
+    ],
+  });
+
+<span class="keyword">await</span> agent.splitter.<span class="function">execute</span>(split.id);
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- MCP Server -->
+  <section style="padding-top: 60px;">
+    <div class="container">
+      <span class="section-label">🔌 MCP Integration</span>
+      <h2 class="section-title">13 Tools for Claude, Cursor & VS Code</h2>
+      <p class="section-subtitle">TonBrain exposes its SDK as an MCP server. Any AI application can interact with TON through the standard protocol.</p>
+
+      <div class="code-section">
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+            <span class="code-title">claude_desktop_config.json</span>
+          </div>
+          <div class="code-content">
+{
+  <span class="string">"mcpServers"</span>: {
+    <span class="string">"tonbrain"</span>: {
+      <span class="string">"command"</span>: <span class="string">"npx"</span>,
+      <span class="string">"args"</span>: [<span class="string">"-y"</span>, <span class="string">"tonbrain-mcp"</span>],
+      <span class="string">"env"</span>: { <span class="string">"NETWORK"</span>: <span class="string">"testnet"</span> }
+    }
+  }
+}
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span>
+            <span class="code-title">Available Tools</span>
+          </div>
+          <div class="code-content">
+<span class="comment">// 🔑 Wallet Tools (5)</span>
+<span class="function">ton_get_balance</span>      <span class="comment">— TON + jetton balances</span>
+<span class="function">ton_get_transactions</span>  <span class="comment">— Transaction history</span>
+<span class="function">ton_get_nfts</span>          <span class="comment">— NFT gallery with metadata</span>
+<span class="function">ton_get_jettons</span>       <span class="comment">— Fungible token balances</span>
+<span class="function">ton_resolve_dns</span>       <span class="comment">— .ton domain → address</span>
+
+<span class="comment">// 💰 Payment Tools (4)</span>
+<span class="function">ton_create_invoice</span>    <span class="comment">— Deep link invoices</span>
+<span class="function">ton_create_escrow</span>     <span class="comment">— Agent-to-agent escrow</span>
+<span class="function">ton_escrow_action</span>     <span class="comment">— Fund / release / refund</span>
+<span class="function">ton_split_payment</span>     <span class="comment">— Multi-party splits</span>
+
+<span class="comment">// 🤖 Coordination Tools (4)</span>
+<span class="function">ton_register_agent</span>    <span class="comment">— Registry with capabilities</span>
+<span class="function">ton_discover_agents</span>   <span class="comment">— Find agents by skill</span>
+<span class="function">ton_route_task</span>        <span class="comment">— Cost-based task routing</span>
+<span class="function">ton_agent_status</span>      <span class="comment">— System health check</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <h2>Try TonBrain Now</h2>
+        <p>The stack is ready. Telegram + AI + TON. Experience the future of blockchain interaction.</p>
+        <div class="hero-buttons">
+          <a href="https://t.me/TonBrainAIBot" class="btn btn-telegram btn-lg">
+            🤖 Open @TonBrainAIBot
+          </a>
+          <a href="https://docs.ton.org/ecosystem/ai/mcp" class="btn btn-outline btn-lg">
+            📖 TON MCP Docs
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <p>
+          🧠 TonBrain — Built for the <a href="https://identityhub.app/contests/ai-hackathon">TON AI Agent Hackathon 2026</a>
+        </p>
+        <div class="footer-links">
+          <a href="https://t.me/TonBrainAIBot">Bot</a>
+          <a href="https://identityhub.app/contests/ai-hackathon">Contest</a>
+          <a href="https://identityhub.app/leaderboard">Leaderboard</a>
+          <a href="https://docs.ton.org/ecosystem/ai/mcp">MCP Docs</a>
+          <a href="https://ton.org">TON</a>
+          <a href="https://ai.google.dev">Gemini</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Countdown to March 25, 2026 UTC
+    function updateCountdown() {
+      const deadline = new Date('2026-03-25T00:00:00Z').getTime();
+      const now = new Date().getTime();
+      const diff = deadline - now;
+
+      if (diff <= 0) {
+        document.getElementById('countdown').innerHTML = '<div style="font-size:16px;font-weight:700;color:var(--accent-gold);">🏆 Submissions Closed — Judging In Progress</div>';
+        return;
+      }
+
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('cd-days').textContent = d;
+      document.getElementById('cd-hours').textContent = String(h).padStart(2, '0');
+      document.getElementById('cd-mins').textContent = String(m).padStart(2, '0');
+      document.getElementById('cd-secs').textContent = String(s).padStart(2, '0');
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .track-card, .code-block, .criteria-card, .eco-stat, .stack-item').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'all 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

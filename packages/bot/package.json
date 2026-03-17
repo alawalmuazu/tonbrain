@@ -1,0 +1,31 @@
+{
+  "name": "tonbrain-bot",
+  "version": "1.0.0",
+  "description": "TonBrain — AI-Powered Telegram Bot for TON Blockchain",
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm --clean",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "tonbrain-sdk": "*",
+    "grammy": "^1.30.0",
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.0",
+    "eventemitter3": "^5.0.1",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "tsx": "^4.19.0",
+    "tsup": "^8.2.0",
+    "vitest": "^2.1.0",
+    "@types/node": "^22.0.0"
+  },
+  "keywords": ["ton", "telegram", "ai", "bot", "blockchain"],
+  "license": "MIT"
+}

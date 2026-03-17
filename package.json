@@ -1,0 +1,20 @@
+{
+  "name": "tonbrain",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TonBrain — AI Agent Infrastructure & Telegram Bot for TON Blockchain",
+  "workspaces": [
+    "packages/sdk",
+    "packages/bot",
+    "packages/mcp"
+  ],
+  "scripts": {
+    "dev:bot": "npm run dev -w packages/bot",
+    "dev:sdk": "npm run dev -w packages/sdk",
+    "dev:mcp": "npm run dev -w packages/mcp",
+    "build": "npm run build -w packages/sdk && npm run build -w packages/bot && npm run build -w packages/mcp",
+    "test": "npm run test -w packages/sdk && npm run test -w packages/bot"
+  },
+  "keywords": ["ton", "telegram", "ai", "agent", "mcp", "blockchain"],
+  "license": "MIT"
+}

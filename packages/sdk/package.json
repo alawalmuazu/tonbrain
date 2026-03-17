@@ -1,0 +1,43 @@
+{
+  "name": "tonbrain-sdk",
+  "version": "1.0.0",
+  "description": "AI Agent Infrastructure SDK for TON Blockchain",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./payments/*": {
+      "import": "./src/payments/*.ts",
+      "default": "./src/payments/*.ts"
+    },
+    "./core/*": {
+      "import": "./src/core/*.ts",
+      "default": "./src/core/*.ts"
+    }
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "zod": "^3.23.0",
+    "eventemitter3": "^5.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "tsx": "^4.19.0",
+    "tsup": "^8.2.0",
+    "vitest": "^2.1.0",
+    "@types/node": "^22.0.0"
+  },
+  "keywords": ["ton", "ai", "agent", "mcp", "sdk", "blockchain"],
+  "license": "MIT"
+}
